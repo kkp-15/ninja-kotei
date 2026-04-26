@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>固定費の砦｜サブスク・毎月の支払いをまるごと見える化｜無料・登録不要</title>
+<meta name="description" content="サブスクや保険・通信費などの固定費を入力するだけで年間総額を自動計算。Excel入出力対応、見直しのヒント付き。登録不要・データは端末内のみ保存。">
+<meta name="theme-color" content="#e8743b">
+<link rel="canonical" href="https://kotei.kkpwebninja.com/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏯%3C/text%3E%3C/svg%3E">
+
+<meta property="og:title" content="固定費の砦｜サブスク・固定費の見える化">
+<meta property="og:description" content="毎月の固定費を入力するだけで年間総額を自動計算。Excel入出力対応、見直しヒント付き。無料・登録不要。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kotei.kkpwebninja.com/">
+<meta property="og:site_name" content="固定費の砦">
+<meta property="og:image" content="https://kotei.kkpwebninja.com/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kotei.kkpwebninja.com/ogp.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "固定費の砦",
+  "url": "https://kotei.kkpwebninja.com/",
+  "description": "サブスク・固定費を入力して年間総額を自動計算する無料Webアプリ。Excel入出力・カテゴリ別集計・見直しヒント付き。",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {"@type":"Offer","price":"0","priceCurrency":"JPY"},
+  "author": {"@type":"Person","name":"こーきっぺ"}
+}
+</script>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2LM85GJN0L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-2LM85GJN0L');
+</script>
+
+<!-- AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1298304917726270" crossorigin="anonymous"></script>
+
+<style>
+  :root {
+    --orange: #e8743b;
+    --orange-deep: #c85a26;
+    --orange-light: #fbe4d3;
+    --cream: #fdf6ec;
+    --cream-dark: #f4ead8;
+    --ink: #2b1d12;
+    --ink-soft: #5a4a3a;
+    --warn: #d94a3d;
+    --line: #e0d5be;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.7;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(232, 116, 59, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(232, 116, 59, 0.04) 0%, transparent 40%);
+  }
+  .container { max-width: 880px; margin: 0 auto; padding: 24px 20px 80px; }
+  header { text-align: center; padding: 32px 0 24px; border-bottom: 2px dashed var(--line); margin-bottom: 32px; }
+  .logo-mark { display: inline-block; background: var(--orange); color: var(--cream); padding: 6px 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; border-radius: 2px; margin-bottom: 12px; }
+  h1 { font-size: clamp(26px, 5vw, 38px); font-weight: 900; letter-spacing: 0.02em; margin-bottom: 8px; color: var(--ink); }
+  h1 .accent { color: var(--orange-deep); }
+  .tagline { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+
+  .intro { background: white; border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px; margin-bottom: 24px; font-size: 14px; }
+  .intro h3 { font-size: 14px; color: var(--orange-deep); margin-bottom: 8px; font-weight: 700; }
+  .intro ol { padding-left: 20px; color: var(--ink-soft); }
+  .intro ol li { margin-bottom: 4px; }
+  .intro .safe { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 12px; color: var(--ink-soft); }
+
+  .hero-impact { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%); color: var(--cream); padding: 36px 24px; border-radius: 4px; text-align: center; margin-bottom: 32px; position: relative; overflow: hidden; box-shadow: 0 8px 24px rgba(200, 90, 38, 0.2); }
+  .hero-impact::before { content: '¥'; position: absolute; font-size: 280px; opacity: 0.08; top: -60px; right: -40px; font-weight: 900; line-height: 1; }
+  .hero-label { font-size: 12px; letter-spacing: 0.3em; margin-bottom: 8px; opacity: 0.9; }
+  .hero-amount { font-size: clamp(40px, 9vw, 64px); font-weight: 900; line-height: 1.1; margin-bottom: 6px; font-feature-settings: "tnum"; letter-spacing: -0.02em; }
+  .hero-yen { font-size: 0.5em; margin-right: 4px; }
+  .hero-sub { font-size: 14px; opacity: 0.92; }
+  .hero-monthly { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(253, 246, 236, 0.3); font-size: 14px; }
+  .hero-monthly strong { font-size: 22px; font-weight: 800; }
+
+  .add-card { background: white; border: 1px solid var(--line); border-radius: 4px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(43, 29, 18, 0.04); }
+  .add-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .add-card h2::before { content: '＋'; background: var(--orange); color: white; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  label { display: block; font-size: 12px; color: var(--ink-soft); margin-bottom: 4px; font-weight: 600; }
+  label .hint { font-weight: 400; color: var(--ink-soft); margin-left: 4px; font-size: 11px; }
+  input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 3px; font-size: 15px; font-family: inherit; background: var(--cream); color: var(--ink); transition: border-color 0.15s; }
+  input:focus, select:focus { outline: none; border-color: var(--orange); background: white; }
+  .btn { background: var(--orange); color: white; border: none; padding: 12px 20px; border-radius: 3px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 12px; transition: background 0.15s, transform 0.1s; font-family: inherit; }
+  .btn:hover { background: var(--orange-deep); }
+  .btn:active { transform: translateY(1px); }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--cream-dark); color: var(--ink); }
+
+  .quick-add { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); }
+  .quick-add .label-text { font-size: 12px; color: var(--ink-soft); font-weight: 600; margin-bottom: 8px; }
+  .quick-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .quick-btn { background: var(--cream); border: 1px solid var(--line); border-radius: 20px; padding: 6px 12px; font-size: 12px; color: var(--ink-soft); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .quick-btn:hover { border-color: var(--orange); color: var(--orange-deep); background: var(--orange-light); }
+
+  .breakdown { background: white; border: 1px solid var(--line); border-radius: 4px; padding: 20px; margin-bottom: 24px; }
+  .breakdown h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; border-left: 4px solid var(--orange); padding-left: 10px; }
+  .cat-row { margin-bottom: 14px; }
+  .cat-row:last-child { margin-bottom: 0; }
+  .cat-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; font-size: 14px; }
+  .cat-name { font-weight: 600; }
+  .cat-amount { font-feature-settings: "tnum"; color: var(--ink-soft); font-size: 13px; }
+  .cat-amount strong { color: var(--ink); font-size: 15px; font-weight: 700; }
+  .bar-track { height: 8px; background: var(--cream-dark); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--orange) 0%, var(--orange-deep) 100%); border-radius: 4px; transition: width 0.5s ease; }
+
+  .list-section h2 { font-size: 16px; font-weight: 700; margin-bottom: 14px; padding-left: 4px; }
+  .empty { text-align: center; padding: 40px 20px; color: var(--ink-soft); background: white; border: 1px dashed var(--line); border-radius: 4px; }
+  .item { background: white; border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; transition: border-color 0.15s; }
+  .item:hover { border-color: var(--orange); }
+  .item.upcoming { border-left: 4px solid var(--warn); background: linear-gradient(to right, rgba(217, 74, 61, 0.04), white 30%); }
+  .item-cat { width: 36px; height: 36px; border-radius: 50%; background: var(--orange-light); color: var(--orange-deep); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .item-body { flex: 1; min-width: 0; }
+  .item-name { font-weight: 700; font-size: 15px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-meta { font-size: 12px; color: var(--ink-soft); }
+  .item-meta .warn { color: var(--warn); font-weight: 600; }
+  .item-amount { text-align: right; flex-shrink: 0; }
+  .item-price { font-weight: 800; font-size: 16px; font-feature-settings: "tnum"; }
+  .item-cycle { font-size: 11px; color: var(--ink-soft); }
+  .item-del { background: none; border: none; color: var(--ink-soft); cursor: pointer; font-size: 18px; padding: 4px 8px; line-height: 1; transition: color 0.15s; }
+  .item-del:hover { color: var(--warn); }
+
+  .review-section { margin-top: 32px; padding: 24px; background: var(--orange-light); border-radius: 4px; border: 1px solid var(--orange); }
+  .review-section h2 { font-size: 18px; font-weight: 800; margin-bottom: 6px; color: var(--orange-deep); }
+  .review-section .lead { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
+  .review-card { background: white; padding: 16px; border-radius: 3px; margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start; }
+  .review-icon { font-size: 24px; flex-shrink: 0; }
+  .review-body { flex: 1; }
+  .review-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .review-desc { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
+  .review-cta { display: inline-block; color: var(--orange-deep); font-size: 12px; font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--orange-deep); }
+  .review-cta:hover { color: var(--orange); border-color: var(--orange); }
+
+  .tools { display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+  .tools .btn { flex: 1; margin-top: 0; min-width: 140px; }
+  .tool-note { font-size: 12px; color: var(--ink-soft); margin-top: 10px; text-align: center; line-height: 1.6; }
+  footer { margin-top: 56px; padding-top: 24px; border-top: 1px dashed var(--line); text-align: center; font-size: 12px; color: var(--ink-soft); }
+
+  @media (max-width: 480px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .item-name { font-size: 14px; }
+    .container { padding: 16px 14px 60px; }
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .item, .cat-row { animation: fadeUp 0.3s ease both; }
+
+  /* Excel連携セクション */
+  .excel-section {
+    margin-top: 32px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .excel-section h2 {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px 20px;
+    background: var(--cream-dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .excel-body { padding: 20px; }
+  .excel-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .excel-buttons .btn { flex: 1; margin-top: 0; min-width: 160px; }
+  .excel-guide {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .excel-guide h4 {
+    font-size: 13px;
+    color: var(--orange-deep);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .step-list { list-style: none; padding: 0; counter-reset: step; }
+  .step-list li {
+    position: relative;
+    padding: 6px 0 6px 32px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    counter-increment: step;
+    line-height: 1.6;
+  }
+  .step-list li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 6px;
+    background: var(--orange);
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .step-list li strong { color: var(--ink); }
+  details.tips {
+    margin-top: 8px;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    padding: 0;
+  }
+  details.tips summary {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 600;
+    list-style: none;
+    user-select: none;
+  }
+  details.tips summary::-webkit-details-marker { display: none; }
+  details.tips summary::before {
+    content: '▸ ';
+    display: inline-block;
+    transition: transform 0.15s;
+    margin-right: 4px;
+  }
+  details.tips[open] summary::before { transform: rotate(90deg); }
+  details.tips .tips-body {
+    padding: 0 14px 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  .excel-danger {
+    background: rgba(217, 74, 61, 0.08);
+    border-left: 3px solid var(--warn);
+    padding: 10px 14px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+  .clear-area {
+    margin-top: 24px;
+    text-align: center;
+  }
+  .clear-area .btn {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <span class="logo-mark">KOTEI-HI</span>
+    <h1>固定費の<span class="accent">砦</span></h1>
+    <p class="tagline">サブスク・毎月の支払いを、まるごと見える化</p>
+  </header>
+
+  <div class="intro">
+    <h3>📖 はじめての方へ</h3>
+    <ol>
+      <li>下のフォームに、毎月（または毎年）払っているものを入力</li>
+      <li>「追加する」ボタンで登録</li>
+      <li>年間いくら払っているかが一目でわかります</li>
+    </ol>
+    <div class="safe">
+      🔒 <strong>安心ポイント：</strong>会員登録は不要。入力した内容はあなたのスマホ・パソコンの中だけに保存されます（インターネット上には送信されません）。
+    </div>
+  </div>
+
+  <div class="hero-impact">
+    <div class="hero-label">YOUR ANNUAL COST</div>
+    <div class="hero-amount">
+      <span class="hero-yen">¥</span><span id="totalYear">0</span>
+    </div>
+    <div class="hero-sub" id="subMessage">サブスクを追加して年間コストを見てみよう</div>
+    <div class="hero-monthly">
+      月あたり <strong>¥<span id="totalMonth">0</span></strong> / 件数 <strong id="itemCount">0</strong>
+    </div>
+  </div>
+
+  <div class="add-card">
+    <h2>サブスク・固定費を追加</h2>
+    <div class="form-grid">
+      <div class="full">
+        <label>サービス名 <span class="hint">例：Netflix、楽天モバイル、生命保険</span></label>
+        <input type="text" id="inName" placeholder="例：Netflix">
+      </div>
+      <div>
+        <label>金額（円）</label>
+        <input type="number" id="inAmount" placeholder="1490" min="0" inputmode="numeric">
+      </div>
+      <div>
+        <label>支払いの周期</label>
+        <select id="inCycle">
+          <option value="monthly">毎月の支払い</option>
+          <option value="yearly">毎年の支払い</option>
+        </select>
+      </div>
+      <div>
+        <label>カテゴリ <span class="hint">どの種類の支払いか</span></label>
+        <select id="inCategory">
+          <option value="動画">🎬 動画配信</option>
+          <option value="音楽">🎵 音楽</option>
+          <option value="通信">📱 スマホ・通信費</option>
+          <option value="保険">🛡️ 保険</option>
+          <option value="光熱">💡 電気・ガス</option>
+          <option value="ジム">💪 ジム・健康</option>
+          <option value="クラウド">☁️ クラウド・IT</option>
+          <option value="その他">📦 その他</option>
+        </select>
+      </div>
+      <div>
+        <label>次の支払い日 <span class="hint">わからなければ空欄でOK</span></label>
+        <input type="date" id="inNext">
+      </div>
+    </div>
+    <button class="btn" id="btnAdd">追加する</button>
+
+    <div class="quick-add">
+      <div class="label-text">💡 よく使われているサブスク（タップで入力欄に反映）</div>
+      <div class="quick-grid" id="quickGrid"></div>
+    </div>
+  </div>
+
+  <div class="breakdown" id="breakdownBox" style="display:none;">
+    <h2>カテゴリ別の月額</h2>
+    <div id="breakdownList"></div>
+  </div>
+
+  <div class="list-section">
+    <h2>登録した固定費</h2>
+    <div id="listArea"></div>
+  </div>
+
+  <div class="review-section" id="reviewSection" style="display:none;">
+    <h2>💡 見直しのヒント</h2>
+    <p class="lead">登録された固定費から、削減できそうなポイントを提案します</p>
+    <div id="reviewList"></div>
+  </div>
+
+  <!-- Excel連携セクション -->
+  <div class="excel-section">
+    <h2>📊 Excelで編集する（パソコンで一括入力もできます）</h2>
+    <div class="excel-body">
+
+      <div class="excel-guide">
+        <h4>こんなときに便利です</h4>
+        <ol class="step-list">
+          <li>サブスクが<strong>たくさんあって、一気に入力したい</strong>とき</li>
+          <li>ご家族や友人と<strong>ファイルでやり取り</strong>したいとき</li>
+          <li>パソコンの<strong>大きい画面でじっくり編集</strong>したいとき</li>
+        </ol>
+      </div>
+
+      <div class="excel-buttons">
+        <button class="btn" id="btnExport">📤 ① 保存する（Excelファイルにする）</button>
+        <button class="btn btn-ghost" id="btnImport">📥 ② 読み込む（編集したファイルを反映）</button>
+        <input type="file" id="fileImport" accept=".xlsx,.xls" style="display:none;">
+      </div>
+
+      <div class="excel-guide">
+        <h4>📖 Excelで編集する3ステップ</h4>
+        <ol class="step-list">
+          <li><strong>「① 保存する」ボタン</strong>を押すと、Excelファイル（.xlsx）がパソコンにダウンロードされます</li>
+          <li>ダウンロードしたファイルを<strong>Excel・Googleスプレッドシート・Numbersなど</strong>で開いて、自由に編集してください</li>
+          <li><strong>「② 読み込む」ボタン</strong>を押して、編集したファイルを選ぶと、サイトに反映されます</li>
+        </ol>
+      </div>
+
+      <details class="tips">
+        <summary>💡 編集するときのコツ・注意点</summary>
+        <div class="tips-body">
+          <p style="margin-bottom:8px;"><strong>✅ できること</strong></p>
+          <ul style="padding-left:20px; margin-bottom:12px;">
+            <li>サービス名や金額を書き換える</li>
+            <li>新しい行を追加して、サブスクを増やす</li>
+            <li>不要な行を削除する</li>
+            <li>並べ替えをする</li>
+          </ul>
+          <p style="margin-bottom:8px;"><strong>⚠️ 守ってほしいこと</strong></p>
+          <ul style="padding-left:20px; margin-bottom:12px;">
+            <li>1行目（見出し）の文字は変えないでください<br><span style="font-size:11px;">（「サービス名」「金額」「支払い周期」など）</span></li>
+            <li>「支払い周期」の欄は<strong>「毎月」か「毎年」</strong>のどちらかを入れてください</li>
+            <li>編集するシートは<strong>「固定費一覧」</strong>です（「集計」シートはおまけです）</li>
+          </ul>
+          <p style="margin-bottom:6px;"><strong>📁 カテゴリに使える言葉</strong></p>
+          <p style="font-size:11px;">動画 / 音楽 / 通信 / 保険 / 光熱 / ジム / クラウド / その他</p>
+        </div>
+      </details>
+
+      <div class="excel-danger">
+        ⚠️ <strong>「② 読み込む」を押すと、今サイトに登録されている内容は上書きされます。</strong>大事なデータは先に「① 保存する」でバックアップを取っておくと安心です。
+      </div>
+    </div>
+  </div>
+
+  <div class="clear-area">
+    <button class="btn btn-ghost" id="btnClear">🗑️ 登録した内容をすべて削除</button>
+  </div>
+
+  <footer style="margin-top:32px;padding-top:16px;border-top:1px dashed var(--line);text-align:center;font-size:12px;color:var(--ink-soft);">
+    <p>© <span id="year"></span> 固定費の砦</p>
+    <p style="margin-top:6px;">入力したデータはお使いの端末にのみ保存されます。</p>
+  </footer>
+</div>
+
+<!-- WEBNINJA_UNIFIED_FOOTER -->
+<footer style="text-align:center;padding:2rem 1rem 2.5rem;font-size:0.78rem;color:#94a3b8;line-height:2;border-top:1px solid #f0e6d2;margin-top:2.5rem;background:#fffcf7;">
+  <div style="font-weight:800;color:#8b6b3d;font-size:0.85rem;margin-bottom:0.4rem;">web忍者の砦</div>
+  <div>
+    <a href="https://kkpwebninja.com/" target="_blank" rel="noopener" style="color:#8b6b3d;text-decoration:none;margin:0 0.5rem;">本丸トップ</a>·
+    <a href="https://privacypolicy.kkpwebninja.com/" target="_blank" rel="noopener" style="color:#8b6b3d;text-decoration:none;margin:0 0.5rem;">プライバシーポリシー</a>·
+    <a href="https://kkpwebninja.com/otoiawase" target="_blank" rel="noopener" style="color:#8b6b3d;text-decoration:none;margin:0 0.5rem;">お問い合わせ</a>·
+    <a href="https://x.com/kkp_webninja" target="_blank" rel="noopener" style="color:#8b6b3d;text-decoration:none;margin:0 0.5rem;">@kkp_webninja</a>
+  </div>
+  <div style="margin-top:0.5rem;color:#bfa97a;">© 2025-2026 web忍者の砦</div>
+</footer>
+
+<script>
+const STORAGE_KEY = 'kotei_hi_v1';
+const CAT_EMOJI = { '動画':'🎬','音楽':'🎵','通信':'📱','保険':'🛡️','光熱':'💡','ジム':'💪','クラウド':'☁️','その他':'📦' };
+
+const QUICK_ITEMS = [
+  { name: 'Netflix', amount: 1590, category: '動画' },
+  { name: 'Amazonプライム', amount: 600, category: '動画' },
+  { name: 'YouTube Premium', amount: 1280, category: '動画' },
+  { name: 'Disney+', amount: 990, category: '動画' },
+  { name: 'Spotify', amount: 980, category: '音楽' },
+  { name: 'Apple Music', amount: 1080, category: '音楽' },
+  { name: 'iCloud+', amount: 130, category: 'クラウド' },
+  { name: 'ChatGPT Plus', amount: 3000, category: 'クラウド' }
+];
+
+const REVIEW_TEMPLATES = {
+  '通信': { icon: '📱', title: '通信費は格安SIMで年間数万円カットも', desc: '大手キャリアから格安SIMへ乗り換えれば、月3,000〜5,000円の節約も珍しくありません。', cta: '格安SIM比較を見る →', href: '#aff-mvno' },
+  '動画': { icon: '🎬', title: '動画配信、本当に全部見ていますか？', desc: '複数契約しているなら、一本化も検討の価値あり。U-NEXTは雑誌読み放題などお得な特典も。', cta: 'U-NEXTを見る →', href: '#aff-unext' },
+  '保険': { icon: '🛡️', title: '保険は本当に必要な分だけに', desc: '独身の方なら高額な生命保険は不要なケースが多いです。公的保障で足りる範囲を確認しましょう。', cta: '保険見直し相談 →', href: '#aff-hoken' },
+  '光熱': { icon: '💡', title: '電気・ガスは比較サイトで簡単乗り換え', desc: 'プラン見直しだけで年間1〜3万円の削減も。手続きはネットで完結します。', cta: '電気料金を比較 →', href: '#aff-enechange' },
+  'クラウド': { icon: '☁️', title: '使っていないクラウドサービスはありませんか', desc: 'Google Drive、iCloud、Notionなど。重複や未使用がないか棚卸ししましょう。', cta: '—', href: null }
+};
+
+const INVEST_TIP = { icon: '📈', title: '浮いたお金の活用先', desc: '固定費を削った分を投資に回せば、さらに資産形成が加速します。NISAで月1万円積立が現実的なライン。', cta: 'SBI証券・楽天証券を比較 →', href: '#aff-shoken' };
+
+let items = [];
+
+function load() {
+  try { items = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch (e) { items = []; }
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+function toMonthly(item) { return item.cycle === 'yearly' ? item.amount / 12 : item.amount; }
+function fmt(n) { return Math.round(n).toLocaleString('ja-JP'); }
+
+function render() {
+  const monthlyTotal = items.reduce((s, i) => s + toMonthly(i), 0);
+  const yearlyTotal = monthlyTotal * 12;
+  document.getElementById('totalYear').textContent = fmt(yearlyTotal);
+  document.getElementById('totalMonth').textContent = fmt(monthlyTotal);
+  document.getElementById('itemCount').textContent = items.length;
+
+  const sub = document.getElementById('subMessage');
+  if (items.length === 0) sub.textContent = 'サブスクを追加して年間コストを見てみよう';
+  else if (yearlyTotal >= 300000) sub.textContent = `1割削れば年間 ¥${fmt(yearlyTotal * 0.1)} の節約に`;
+  else if (yearlyTotal >= 100000) sub.textContent = `見直しで月¥${fmt(monthlyTotal * 0.15)}の削減も狙える`;
+  else sub.textContent = '小さな積み重ねが大きな差を生みます';
+
+  const byCat = {};
+  items.forEach(i => { byCat[i.category] = (byCat[i.category] || 0) + toMonthly(i); });
+  const sortedCats = Object.entries(byCat).sort((a,b) => b[1] - a[1]);
+  const maxVal = sortedCats[0]?.[1] || 1;
+
+  const breakdownBox = document.getElementById('breakdownBox');
+  if (sortedCats.length === 0) {
+    breakdownBox.style.display = 'none';
+  } else {
+    breakdownBox.style.display = 'block';
+    document.getElementById('breakdownList').innerHTML = sortedCats.map(([cat, val]) => `
+      <div class="cat-row">
+        <div class="cat-head">
+          <span class="cat-name">${CAT_EMOJI[cat] || '📦'} ${cat}</span>
+          <span class="cat-amount"><strong>¥${fmt(val)}</strong>/月（年¥${fmt(val * 12)}）</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(val/maxVal*100).toFixed(1)}%"></div></div>
+      </div>`).join('');
+  }
+
+  const listArea = document.getElementById('listArea');
+  if (items.length === 0) {
+    listArea.innerHTML = '<div class="empty">まだ登録がありません。<br>上のフォームから追加してください。</div>';
+  } else {
+    const today = new Date(); today.setHours(0,0,0,0);
+    listArea.innerHTML = items.map((it, idx) => {
+      let upcomingClass = '', metaExtra = '';
+      if (it.next) {
+        const nd = new Date(it.next);
+        const days = Math.floor((nd - today) / (1000*60*60*24));
+        if (days >= 0 && days <= 30) { upcomingClass = 'upcoming'; metaExtra = ` ・ <span class="warn">あと${days}日で更新</span>`; }
+        else if (days >= 0) metaExtra = ` ・ ${it.next}`;
+      }
+      const monthly = toMonthly(it);
+      return `
+        <div class="item ${upcomingClass}">
+          <div class="item-cat">${CAT_EMOJI[it.category] || '📦'}</div>
+          <div class="item-body">
+            <div class="item-name">${escapeHtml(it.name)}</div>
+            <div class="item-meta">${it.category}${metaExtra}</div>
+          </div>
+          <div class="item-amount">
+            <div class="item-price">¥${fmt(it.amount)}</div>
+            <div class="item-cycle">${it.cycle === 'yearly' ? '年' : '月'}（月¥${fmt(monthly)}）</div>
+          </div>
+          <button class="item-del" data-idx="${idx}" title="削除">×</button>
+        </div>`;
+    }).join('');
+    listArea.querySelectorAll('.item-del').forEach(b => {
+      b.addEventListener('click', () => {
+        if (confirm('この項目を削除しますか？')) { items.splice(parseInt(b.dataset.idx), 1); save(); render(); }
+      });
+    });
+  }
+
+  const reviewSection = document.getElementById('reviewSection');
+  const tips = [];
+  Object.keys(byCat).forEach(cat => { if (REVIEW_TEMPLATES[cat]) tips.push(REVIEW_TEMPLATES[cat]); });
+  if (yearlyTotal >= 60000) tips.push(INVEST_TIP);
+  if (tips.length === 0) {
+    reviewSection.style.display = 'none';
+  } else {
+    reviewSection.style.display = 'block';
+    document.getElementById('reviewList').innerHTML = tips.map(t => `
+      <div class="review-card">
+        <div class="review-icon">${t.icon}</div>
+        <div class="review-body">
+          <div class="review-title">${t.title}</div>
+          <div class="review-desc">${t.desc}</div>
+          ${t.href ? `<a class="review-cta" href="${t.href}" target="_blank" rel="noopener">${t.cta}</a>` : ''}
+        </div>
+      </div>`).join('');
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function renderQuickButtons() {
+  const grid = document.getElementById('quickGrid');
+  grid.innerHTML = QUICK_ITEMS.map((q, i) => `<button class="quick-btn" data-i="${i}">${q.name}</button>`).join('');
+  grid.querySelectorAll('.quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = QUICK_ITEMS[parseInt(btn.dataset.i)];
+      document.getElementById('inName').value = q.name;
+      document.getElementById('inAmount').value = q.amount;
+      document.getElementById('inCategory').value = q.category;
+      document.getElementById('inCycle').value = 'monthly';
+      document.getElementById('inAmount').focus();
+    });
+  });
+}
+
+document.getElementById('btnAdd').addEventListener('click', () => {
+  const name = document.getElementById('inName').value.trim();
+  const amount = parseFloat(document.getElementById('inAmount').value);
+  const cycle = document.getElementById('inCycle').value;
+  const category = document.getElementById('inCategory').value;
+  const next = document.getElementById('inNext').value;
+  if (!name) { alert('サービス名を入力してください'); return; }
+  if (isNaN(amount) || amount < 0) { alert('金額を入力してください'); return; }
+  items.push({ name, amount, cycle, category, next: next || null });
+  save(); render();
+  document.getElementById('inName').value = '';
+  document.getElementById('inAmount').value = '';
+  document.getElementById('inNext').value = '';
+});
+
+document.getElementById('btnExport').addEventListener('click', () => {
+  if (items.length === 0) { alert('まだ登録がありません'); return; }
+  
+  // データ行（読み込み時もこの構造を使う）
+  const header = ['サービス名', '金額', '支払い周期', 'カテゴリ', '次回支払い日', '月額換算（自動計算）'];
+  const rows = items.map(i => [
+    i.name,
+    i.amount,
+    i.cycle === 'yearly' ? '毎年' : '毎月',
+    i.category,
+    i.next || '',
+    Math.round(toMonthly(i))
+  ]);
+  
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  
+  // 列幅
+  ws['!cols'] = [
+    { wch: 24 }, { wch: 10 }, { wch: 10 },
+    { wch: 14 }, { wch: 14 }, { wch: 18 }
+  ];
+  
+  // ヘッダーに色付け
+  const headerStyle = {
+    fill: { fgColor: { rgb: 'E8743B' } },
+    font: { color: { rgb: 'FFFFFF' }, bold: true },
+    alignment: { horizontal: 'center', vertical: 'center' }
+  };
+  ['A1','B1','C1','D1','E1','F1'].forEach(cell => {
+    if (ws[cell]) ws[cell].s = headerStyle;
+  });
+
+  // 入力規則（支払い周期は「毎月/毎年」のみ）
+  ws['!dataValidation'] = [{
+    sqref: `C2:C${rows.length + 1}`,
+    type: 'list',
+    formulae: ['"毎月,毎年"']
+  }];
+  
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '固定費一覧');
+
+  // 集計シート（参考用）
+  const totalMonthly = items.reduce((s, i) => s + toMonthly(i), 0);
+  const summary = [
+    ['📊 固定費の集計'],
+    [],
+    ['月の合計', Math.round(totalMonthly)],
+    ['年の合計', Math.round(totalMonthly * 12)],
+    ['登録件数', items.length],
+    [],
+    ['カテゴリ別（月額）', ''],
+  ];
+  const byCat = {};
+  items.forEach(i => { byCat[i.category] = (byCat[i.category] || 0) + toMonthly(i); });
+  Object.entries(byCat).sort((a,b) => b[1] - a[1]).forEach(([cat, val]) => {
+    summary.push([cat, Math.round(val)]);
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet(summary);
+  ws2['!cols'] = [{ wch: 24 }, { wch: 14 }];
+  XLSX.utils.book_append_sheet(wb, ws2, '集計');
+  
+  const fileName = `固定費一覧-${new Date().toISOString().slice(0,10)}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+});
+
+// インポート機能
+document.getElementById('btnImport').addEventListener('click', () => {
+  document.getElementById('fileImport').click();
+});
+
+document.getElementById('fileImport').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = new Uint8Array(ev.target.result);
+      const wb = XLSX.read(data, { type: 'array' });
+      
+      // 「固定費一覧」シートを探す（なければ最初のシート）
+      let sheetName = wb.SheetNames.find(n => n === '固定費一覧') || wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      
+      if (rows.length < 2) {
+        alert('データが見つかりませんでした。\n「固定費一覧」シートに内容が入っているか確認してください。');
+        return;
+      }
+      
+      // ヘッダー行を確認
+      const header = rows[0];
+      const expectedCols = ['サービス名', '金額', '支払い周期', 'カテゴリ'];
+      const headerOk = expectedCols.every(col => header.includes(col));
+      if (!headerOk) {
+        alert('Excelファイルの形式が正しくないようです。\nこのサイトから保存したファイルを使ってください。');
+        return;
+      }
+      
+      // データ行をパース
+      const newItems = [];
+      const errors = [];
+      const validCategories = ['動画','音楽','通信','保険','光熱','ジム','クラウド','その他'];
+      
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        const name = String(r[0] || '').trim();
+        if (!name) continue; // 空行スキップ
+        
+        const amount = parseFloat(r[1]);
+        const cycleRaw = String(r[2] || '').trim();
+        const category = String(r[3] || 'その他').trim();
+        const next = r[4] ? String(r[4]).trim() : null;
+        
+        if (isNaN(amount) || amount < 0) {
+          errors.push(`${i + 1}行目「${name}」: 金額が正しくありません`);
+          continue;
+        }
+        
+        const cycle = cycleRaw === '毎年' ? 'yearly' : 'monthly';
+        const cat = validCategories.includes(category) ? category : 'その他';
+        
+        // 日付の正規化（Excelの日付シリアル値も対応）
+        let nextDate = null;
+        if (next) {
+          if (/^\d+$/.test(next)) {
+            // Excelシリアル値の場合
+            const d = XLSX.SSF.parse_date_code(parseInt(next));
+            if (d) nextDate = `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+          } else if (/^\d{4}-\d{2}-\d{2}/.test(next)) {
+            nextDate = next.slice(0, 10);
+          } else if (/^\d{4}\/\d{1,2}\/\d{1,2}/.test(next)) {
+            const [y, m, d] = next.split('/');
+            nextDate = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          }
+        }
+        
+        newItems.push({ name, amount, cycle, category: cat, next: nextDate });
+      }
+      
+      if (newItems.length === 0) {
+        alert('読み込めるデータがありませんでした。');
+        return;
+      }
+      
+      // 確認ダイアログ
+      let msg = `Excelファイルから ${newItems.length}件 の固定費が見つかりました。\n\n`;
+      if (items.length > 0) {
+        msg += `現在登録されている ${items.length}件 のデータは上書きされます。\n\n`;
+      }
+      msg += '読み込みますか？';
+      if (errors.length > 0) {
+        msg += `\n\n⚠️ 一部スキップした行があります：\n${errors.slice(0, 3).join('\n')}`;
+      }
+      
+      if (confirm(msg)) {
+        items = newItems;
+        save();
+        render();
+        alert(`${newItems.length}件のデータを読み込みました！`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('ファイルの読み込みに失敗しました。\nExcelファイル(.xlsx)を選んでいるか確認してください。');
+    }
+    // 同じファイルを連続で選べるようにリセット
+    e.target.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+document.getElementById('btnClear').addEventListener('click', () => {
+  if (items.length === 0) { alert('まだ登録がありません'); return; }
+  if (confirm('登録した内容をすべて削除します。よろしいですか？\n（この操作は元に戻せません）')) { items = []; save(); render(); }
+});
+
+document.getElementById('year').textContent = new Date().getFullYear();
+load();
+renderQuickButtons();
+render();
+</script>
+</body>
+</html>
