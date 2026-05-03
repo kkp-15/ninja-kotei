@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kotei.kkpwebninja.com/sitemap.xml
